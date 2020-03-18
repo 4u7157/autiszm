@@ -15,11 +15,11 @@
 #include "../decon.h"
 #include "../decon_notify.h"
 
-#include "ea8061s_j4lte_param.h"
+#include "ea8061s_j7lite_param.h"
 
 #if defined(CONFIG_EXYNOS_DECON_MDNIE_LITE)
 #include "mdnie.h"
-#include "mdnie_lite_table_j4lte.h"
+#include "mdnie_lite_table_j7lite.h"
 #endif
 
 #define PANEL_STATE_SUSPENED	0

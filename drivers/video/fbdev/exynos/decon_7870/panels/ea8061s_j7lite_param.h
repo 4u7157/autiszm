@@ -1,9 +1,9 @@
-#ifndef __EA8061S_J4LTE_PARAM_H__
-#define __EA8061S_J4LTE_PARAM_H__
+#ifndef __EA8061S_J7LITE_PARAM_H__
+#define __EA8061S_J7LITE_PARAM_H__
 
 #include <linux/types.h>
 #include <linux/kernel.h>
-#include "dynamic_aid_ea8061s_j4lte.h"
+#include "dynamic_aid_ea8061s_j7lite.h"
 
 #define EXTEND_BRIGHTNESS	355
 #define UI_MAX_BRIGHTNESS	255
@@ -459,4 +459,4 @@ static unsigned int brightness_table[EXTEND_BRIGHTNESS + 1] = {
 	[255 ... EXTEND_BRIGHTNESS] = IBRIGHTNESS_360NIT
 };
 
-#endif /* __EA8061S_J4LTE_PARAM_H__ */
+#endif /* __EA8061S_J7LITE_PARAM_H__ */
