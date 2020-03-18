@@ -132,11 +132,11 @@ struct lcd_info {
 	struct notifier_block		dpui_notif;
 #endif
 
-#ifdef CONFIG_LCD_DOZE_MODE
+#if defined(CONFIG_LCD_DOZE_MODE)
 		unsigned int			alpm;
 		unsigned int			current_alpm;
 
-#ifdef CONFIG_SEC_FACTORY
+#if defined(CONFIG_SEC_FACTORY)
 		unsigned int			prev_brightness;
 		unsigned int			prev_alpm;
 #endif
@@ -398,7 +398,7 @@ static int dsim_panel_set_brightness(struct lcd_info *lcd, int force)
 
 	mutex_lock(&lcd->lock);
 
-#ifdef CONFIG_LCD_DOZE_MODE
+#if defined(CONFIG_LCD_DOZE_MODE)
 	if (IS_DOZE(lcd->dsim->doze_state)) {
 		dev_info(&lcd->ld->dev, "%s: brightness: %d, doze_state: %d, %d, %d\n", __func__, lcd->bd->props.brightness, lcd->dsim->doze_state, lcd->current_alpm, lcd->alpm);
 		goto exit;
@@ -806,7 +806,7 @@ static int ea8061s_init(struct lcd_info *lcd)
 	DSI_WRITE(SEQ_TEST_KEY_OFF_F0, ARRAY_SIZE(SEQ_TEST_KEY_OFF_F0));
 	DSI_WRITE(SEQ_TEST_KEY_OFF_FC, ARRAY_SIZE(SEQ_TEST_KEY_OFF_FC));
 
-#ifdef CONFIG_LCD_DOZE_MODE
+#if defined(CONFIG_LCD_DOZE_MODE)
 	lcd->current_alpm = ALPM_OFF;
 #endif
 
@@ -935,7 +935,7 @@ static int ea8061s_probe(struct lcd_info *lcd)
 	return 0;
 }
 
-#ifdef CONFIG_LCD_DOZE_MODE
+#if defined(CONFIG_LCD_DOZE_MODE)
 int ea8061s_setalpm(struct lcd_info *lcd, int mode)
 {
 	int ret = 0;
@@ -973,7 +973,7 @@ int ea8061s_setalpm(struct lcd_info *lcd, int mode)
 		dev_info(&lcd->ld->dev, "%s: input is out of range : %d\n", __func__, mode);
 		break;
 	}
-exit:
+
 	return ret;
 }
 
@@ -1002,7 +1002,7 @@ static int ea8061s_enteralpm(struct lcd_info *lcd)
 
 	ret = ea8061s_setalpm(lcd, lcd->alpm);
 	if (ret < 0)
-		dev_err(&lcd->ld->dev, "%s: failed to set alpm\n", __func__);
+		dev_info(&lcd->ld->dev, "%s: failed to set alpm\n", __func__);
 
 	DSI_WRITE(SEQ_TEST_KEY_OFF_F0, ARRAY_SIZE(SEQ_TEST_KEY_OFF_F0));
 	DSI_WRITE(SEQ_TEST_KEY_OFF_FC, ARRAY_SIZE(SEQ_TEST_KEY_OFF_FC));
@@ -1032,7 +1032,7 @@ static int ea8061s_exitalpm(struct lcd_info *lcd)
 
 	DSI_WRITE(SEQ_TEST_KEY_ON_F0, ARRAY_SIZE(SEQ_TEST_KEY_ON_F0));
 	DSI_WRITE(SEQ_TEST_KEY_ON_FC, ARRAY_SIZE(SEQ_TEST_KEY_ON_FC));
-
+	DSI_WRITE(SEQ_ELVSSTEMPSET_1, ARRAY_SIZE(SEQ_ELVSSTEMPSET_1));
 	DSI_WRITE(SEQ_ALPM_OFF, ARRAY_SIZE(SEQ_ALPM_OFF));
 	DSI_WRITE(SEQ_LTPS_EQ_NORMAL, ARRAY_SIZE(SEQ_LTPS_EQ_NORMAL));
 
@@ -1345,25 +1345,30 @@ static DEVICE_ATTR(dpui, 0660, dpui_show, dpui_store);
 static DEVICE_ATTR(dpui_dbg, 0660, dpui_dbg_show, dpui_dbg_store);
 #endif
 
-#ifdef CONFIG_LCD_DOZE_MODE
-#ifdef CONFIG_SEC_FACTORY
+#if defined(CONFIG_LCD_DOZE_MODE)
+#if defined(CONFIG_SEC_FACTORY)
 static ssize_t alpm_doze_store(struct device *dev,
 	struct device_attribute *attr, const char *buf, size_t size)
 {
-	int value, ret;
 	struct lcd_info *lcd = dev_get_drvdata(dev);
 	struct dsim_device *dsim = lcd->dsim;
-	struct decon_device *decon = dsim->decon;
+	struct decon_device *decon = get_decon_drvdata(0);
+	unsigned int value;
+	int ret;
 
 	ret = kstrtouint(buf, 0, &value);
-
 	if (ret < 0)
 		return ret;
 
 	dev_info(dev, "%s: %d\n", __func__, value);
 
+	if (lcd->state != PANEL_STATE_RESUMED) {
+		dev_info(&lcd->ld->dev, "%s: panel state is %d\n", __func__, lcd->state);
+		return -EINVAL;
+	}
+
 	if (value >= ALPM_MODE_MAX) {
-		dev_err(&lcd->ld->dev, "%s: undefined alpm mode: %d\n", __func__, value);
+		dev_info(&lcd->ld->dev, "%s: undefined alpm mode: %d\n", __func__, value);
 		return -EINVAL;
 	}
 
@@ -1411,20 +1416,20 @@ static ssize_t alpm_doze_store(struct device *dev,
 static ssize_t alpm_doze_store(struct device *dev,
 	struct device_attribute *attr, const char *buf, size_t size)
 {
-	int value, ret;
 	struct lcd_info *lcd = dev_get_drvdata(dev);
 	struct dsim_device *dsim = lcd->dsim;
-	struct decon_device *decon = dsim->decon;
+	struct decon_device *decon = get_decon_drvdata(0);
+	unsigned int value;
+	int ret;
 
 	ret = kstrtouint(buf, 0, &value);
-
 	if (ret < 0)
 		return ret;
 
 	dev_info(dev, "%s: %d, %d\n", __func__, value, dsim->doze_state);
 
 	if (value >= ALPM_MODE_MAX) {
-		dev_err(&lcd->ld->dev, "%s: undefined alpm mode: %d\n", __func__, value);
+		dev_info(&lcd->ld->dev, "%s: undefined alpm mode: %d\n", __func__, value);
 		return -EINVAL;
 	}
 
@@ -1481,7 +1486,7 @@ static struct attribute *lcd_sysfs_attributes[] = {
 	&dev_attr_brightness_table.attr,
 	&dev_attr_adaptive_control.attr,
 	&dev_attr_lux.attr,
-#ifdef CONFIG_LCD_DOZE_MODE
+#if defined(CONFIG_LCD_DOZE_MODE)
 	&dev_attr_alpm.attr,
 #endif
 #if defined(CONFIG_DISPLAY_USE_INFO)
@@ -1675,65 +1680,47 @@ exit:
 	return 0;
 }
 
-#ifdef CONFIG_LCD_DOZE_MODE
+#if defined(CONFIG_LCD_DOZE_MODE)
 static int dsim_panel_enteralpm(struct dsim_device *dsim)
 {
 	struct lcd_info *lcd = dsim->priv.par;
-	struct panel_private *priv = &dsim->priv;
-	int ret = 0;
 
-	dev_info(&lcd->ld->dev, "+%s: %d\n", __func__, lcd->state);
+	dev_info(&lcd->ld->dev, "+ %s: %d\n", __func__, lcd->state);
 
 	if (lcd->state == PANEL_STATE_SUSPENED) {
-		ret = ea8061s_init(lcd);
-		if (ret) {
-			dev_err(&lcd->ld->dev, "%s: failed to panel init, %d\n", __func__, ret);
-			goto exit;
-		}
+		ea8061s_init(lcd);
+
 		mutex_lock(&lcd->lock);
 		lcd->state = PANEL_STATE_RESUMED;
 		mutex_unlock(&lcd->lock);
 	}
 
-	ret = ea8061s_enteralpm(lcd);
-	if (ret) {
-		dev_err(&lcd->ld->dev, "%s: failed to enter alpm, %d\n", __func__, ret);
-		goto exit;
-	}
+	ea8061s_enteralpm(lcd);
 
-	dev_info(&lcd->ld->dev, "-%s: %d\n", __func__, priv->lcdConnected);
-exit:
-	return ret;
+	dev_info(&lcd->ld->dev, "- %s: %d, %d\n", __func__, lcd->state, lcd->connected);
+
+	return 0;
 }
 
 static int dsim_panel_exitalpm(struct dsim_device *dsim)
 {
 	struct lcd_info *lcd = dsim->priv.par;
-	struct panel_private *priv = &dsim->priv;
-	int ret = 0;
 
-	dev_info(&lcd->ld->dev, "+%s: %d\n", __func__, lcd->state);
+	dev_info(&lcd->ld->dev, "+ %s: %d\n", __func__, lcd->state);
 
 	if (lcd->state == PANEL_STATE_SUSPENED) {
-		ret = ea8061s_init(lcd);
-		if (ret) {
-			dev_err(&lcd->ld->dev, "%s: failed to panel init, %d\n", __func__, ret);
-			goto exit;
-		}
+		ea8061s_init(lcd);
+
 		mutex_lock(&lcd->lock);
 		lcd->state = PANEL_STATE_RESUMED;
 		mutex_unlock(&lcd->lock);
 	}
 
-	ret = ea8061s_exitalpm(lcd);
-	if (ret) {
-		dev_err(&lcd->ld->dev, "%s: failed to exit alpm, %d\n", __func__, ret);
-		goto exit;
-	}
+	ea8061s_exitalpm(lcd);
 
-	dev_info(&lcd->ld->dev, "-%s: %d\n", __func__, priv->lcdConnected);
-exit:
-	return ret;
+	dev_info(&lcd->ld->dev, "- %s: %d, %d\n", __func__, lcd->state, lcd->connected);
+
+	return 0;
 }
 #endif
 
@@ -1742,5 +1729,9 @@ struct mipi_dsim_lcd_driver ea8061s_mipi_lcd_driver = {
 	.probe		= dsim_panel_probe,
 	.displayon	= dsim_panel_displayon,
 	.suspend	= dsim_panel_suspend,
+#if defined(CONFIG_LCD_DOZE_MODE)
+	.enteralpm	= dsim_panel_enteralpm,
+	.exitalpm	= dsim_panel_exitalpm,
+#endif
 };
 
