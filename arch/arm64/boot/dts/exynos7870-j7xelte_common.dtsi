@@ -1433,15 +1433,15 @@
 		mode = <0>;
 		resolution = <720 1280>;
 		size = <68 121>;
-		ddi_type = <1>;
+		ddi_type = <0>;
 		timing,refresh = <60>;
 		/* HBP HFP HSW */
 		timing,h-porch = <48 56 4>;
 		/* VBP VFP VSW */
 		timing,v-porch = <5 9 2>;
-		timing,dsi-hs-clk = <477>;
+		timing,dsi-hs-clk = <490>;
 		timing,dsi-escape-clk = <16>;
-		timing,pms = <3 220 2>;
+		timing,pms = <3 226 2>;
 		/* OCTA_ID */
 		gpios = <&gpd3 5 0x1>;
 	};
