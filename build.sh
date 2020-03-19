@@ -34,4 +34,6 @@ make exynos7870-j7xelte_eur_open_00.dtb exynos7870-j7xelte_eur_open_01.dtb exyno
 
 ## Image
 make $defconfig
-make -j$(jobs)
+make -j4
+
+fi
