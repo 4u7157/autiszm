@@ -27,13 +27,16 @@ fi
 ## Core count check
 jobs=$(nproc --all)
 
-## dtb
+## build dtb
 make $defconfig
 make exynos7870-j7xelte_eur_open_00.dtb exynos7870-j7xelte_eur_open_01.dtb exynos7870-j7xelte_eur_open_02.dtb exynos7870-j7xelte_eur_open_03.dtb exynos7870-j7xelte_eur_open_04.dtb
 ./tools/dtbtool arch/arm64/boot/dts/ -o arch/arm64/boot/dtb
 
-## Image
+## build Image
 make $defconfig
 make -j4
 
+## remove the mali version lines
+sed -i '$d' arch/arm64/configs/$defconfig
+sed -i '$d' arch/arm64/configs/$defconfig
 fi
