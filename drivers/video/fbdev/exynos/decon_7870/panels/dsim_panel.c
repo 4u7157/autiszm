@@ -58,12 +58,6 @@ struct mipi_dsim_lcd_driver *mipi_lcd_driver = &td4101_mipi_lcd_driver;
 int dsim_panel_ops_init(struct dsim_device *dsim)
 {
 	int ret = 0;
-#if defined(CONFIG_PANEL_EA8061S_J7XE)
-	if (dsim) {
-		if (dsim->octa_id)
-			mipi_lcd_driver = &ea8061_mipi_lcd_driver;
-	}
-#endif
 #if defined(CONFIG_PANEL_EA8061S_J7VE)
 	if (dsim) {
 		if (!dsim->octa_id)
