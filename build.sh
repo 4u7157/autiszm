@@ -11,7 +11,6 @@ export CROSS_COMPILE=../toolchain/bin/aarch64-linux-gnu-
 export USE_CCACHE=1
 
 read -p "Enter defconfig name: " defconfig
-
 read -p "Enter android build version: " major
 
 ## b1g memes here W.I.P
@@ -52,38 +51,45 @@ read -p "AOSP(1) or OneUI(3): " type
 fi
 ################################################################################ b1g meme end
 
-## automatic mali version based on input
+## Mali version fix
 if [ "$major" == "p" ]; then
-echo "Building P kernel"
 export ANDROID_MAJOR_VERSION=p
-echo -e "CONFIG_DDK_VERSION_OS="p"\nCONFIG_MALI_R28P0=y" >> arch/arm64/configs/$defconfig
+sed -i 's/CONFIG_DDK_VERSION_OS="q"/"CONFIG_DDK_VERSION_OS="p"/g' arch/arm64/configs/$defconfig
+sed -i 's/CONFIG_MALI_R29P0=y/CONFIG_MALI_R28P0=y/g' arch/arm64/configs/$defconfig
 else if [ "$major" == "q" ]; then
-echo "Building Q kernel"
 export ANDROID_MAJOR_VERSION=q
-echo -e "CONFIG_DDK_VERSION_OS="q"\nCONFIG_MALI_R29P0=y" >> arch/arm64/configs/$defconfig
 fi
+
+## Treble USB Fix
+if [ "$type" == "1" ]; then
+sed -i 's/CONFIG_USB_ANDROID_SAMSUNG_MTP=y/# CONFIG_USB_ANDROID_SAMSUNG_MTP is not set/g' arch/arm64/configs/$defconfig
+else if [ "$type" == "2" ]; then
+sed -i 's/CONFIG_USB_ANDROID_SAMSUNG_MTP=y/# CONFIG_USB_ANDROID_SAMSUNG_MTP is not set/g' arch/arm64/configs/$defconfig
 
 ## Core count check
 jobs=$(nproc)
 
-## dtb
+## dtb and Image
 make $defconfig
 make exynos7870-j7xelte_eur_open_00.dtb exynos7870-j7xelte_eur_open_01.dtb exynos7870-j7xelte_eur_open_02.dtb exynos7870-j7xelte_eur_open_03.dtb exynos7870-j7xelte_eur_open_04.dtb
 ./tools/dtbtool arch/arm64/boot/dts/ -o arch/arm64/boot/dtb
-
-## build Image
-make $defconfig
 make -j$jobs
 
-## remove the mali version lines
-sed -i '$d' arch/arm64/configs/$defconfig
-sed -i '$d' arch/arm64/configs/$defconfig
-
-## samsung usb remover for treble
+## Treble USB Fix restore
 if [ "$type" == "1" ]; then
-sed -i '$d' arch/arm64/configs/$defconfig
+sed -i 's/# CONFIG_USB_ANDROID_SAMSUNG_MTP is not set/CONFIG_USB_ANDROID_SAMSUNG_MTP=y/g' arch/arm64/configs/$defconfig
 else if [ "$type" == "2" ]; then
-sed -i '$d' arch/arm64/configs/$defconfig
+sed -i 's/# CONFIG_USB_ANDROID_SAMSUNG_MTP is not set/CONFIG_USB_ANDROID_SAMSUNG_MTP=y/g' arch/arm64/configs/$defconfig
+fi
+
+## Mali version fix restore
+if [ "$major" == "p" ]; then
+sed -i 's/CONFIG_DDK_VERSION_OS="p"/"CONFIG_DDK_VERSION_OS="q"/g' arch/arm64/configs/$defconfig
+sed -i 's/CONFIG_MALI_R28P0=y/CONFIG_MALI_R29P0=y/g' arch/arm64/configs/$defconfig
+fi
+
+
+fi
 fi
 fi
 fi
