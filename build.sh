@@ -21,68 +21,66 @@ export USE_CCACHE=1
 export ANDROID_MAJOR_VERSION=q
 
 read -p "Enter defconfig name: " defconfig
-read -p "Enter android build version: " major
-
+read -p "Enter android build version (type p even if Q AOSP Build): " major
+read - p "AOSP? (y or n)" aosp
 ############################################################# b1g memes here W.I.P
 if [ "$defconfig" == "exynos7870-j7xelte_defconfig" ]; then
-read -p "Non Treble AOSP(1) or Treble AOSP(2) or OneUI(3) or Treble OneUI(4): " type
+read -p "Non Treble (1) or Treble(2): " type
 dtbname="exynos7870-j7xelte_common.dtsi"
 
+dtbfiles="exynos7870-j7xelte_eur_open_00.dtb exynos7870-j7xelte_eur_open_01.dtb exynos7870-j7xelte_eur_open_02.dtb exynos7870-j7xelte_eur_open_03.dtb exynos7870-j7xelte_eur_open_04.dtb"
+
 elif [ "$defconfig" == "exynos7870-gtaxllte_defconfig" ]; then
-read -p "Non Treble AOSP(1) or Treble AOSP(2) or OneUI(3) or Treble OneUI(4): " type
+read -p "Non Treble (1) or Treble(2): " type
 dtbname="exynos7870-gtaxl_common.dtsi"
 
 elif [ "$defconfig" == "exynos7870-gtaxlwifi_defconfig" ]; then
-read -p "Non Treble AOSP(1) or Treble AOSP(2) or OneUI(3) or Treble OneUI(4): " type
+read -p "Non Treble (1) or Treble(2): " type
 dtbname="exynos7870-gtaxl_common.dtsi"
 
 elif [ "$defconfig" == "exynos7870-j7velte_defconfig" ]; then
-read -p "Non Treble AOSP(1) or Treble AOSP(2) or OneUI(3) or Treble OneUI(4): " type
+read -p "Non Treble (1) or Treble(2): " type
 dtbname="exynos7870-j7velte_common.dtsi"
 
 elif [ "$defconfig" == "exynos7870-on7xelte_defconfig" ]; then
-read -p "Non Treble AOSP(1) or Treble AOSP(2) or OneUI(3) or Treble OneUI(4): " type
+read -p "Non Treble (1) or Treble(2): " type
 dtbname="exynos7870-on7xelte_common.dtsi"
 
 elif [ "$defconfig" == "exynos7870-a3y17lte_defconfig" ]; then
-read -p "Non Treble AOSP(1) or Treble AOSP(2) or OneUI(3) or Treble OneUI(4): " type
+read -p "Non Treble (1) or Treble(2): " type
 dtbname="exynos7870-a3y17lte_common.dtsi"
 
 elif [ "$defconfig" == "exynos7870-j5y17lte_defconfig" ]; then
-read -p "Non Treble AOSP(1) or Treble AOSP(2) or OneUI(3) or Treble OneUI(4): " type
+read -p "Non Treble (1) or Treble(2): " type
 dtbname="exynos7870-j5y17lte_common.dtsi"
 
 elif [ "$defconfig" == "exynos7870-j7y17lte_defconfig" ]; then
-read -p "Non Treble AOSP(1) or Treble AOSP(2) or OneUI(3) or Treble OneUI(4): " type
+read -p "Non Treble (1) or Treble(2): " type
 dtbname="exynos7870-j7y17lte_common.dtsi"
 
 elif [ "$defconfig" == "exynos7870-on7xreflte_defconfig" ]; then
-read -p "Non Treble AOSP(1) or Treble AOSP(2) or OneUI(3) or Treble OneUI(4): " type
+read -p "Non Treble (1) or Treble(2): " type
 dtbname="exynos7870-on7xreflte_common.dtsi"
 
-## these don't need dtb change because they are always treble, but they need USB fix for AOSP
+## these don't need dtb change because they are always treble
 elif [ "$defconfig" == "exynos7870-a2corelte_defconfig" ]; then
-read -p "AOSP(1) or OneUI(3): " type
+dtbfiles="## fix later"
 elif [ "$defconfig" == "exynos7870-a6lte_defconfig" ]; then
-read -p "AOSP(1) or OneUI(3): " type
+dtbfiles="exynos7870-a6lte_eur_open_00.dtb exynos7870-a6lte_eur_open_01.dtb exynos7870-a6lte_eur_open_02.dtb exynos7870-a6lte_eur_open_03.dtb"
 elif [ "$defconfig" == "exynos7870-j6lte_defconfig" ]; then
-read -p "AOSP(1) or OneUI(3): " type
+dtbfile="## fix later"
 elif [ "$defconfig" == "exynos7870-m10lte_defconfig" ]; then
-read -p "AOSP(1) or OneUI(3): " type
+dtbfiles="exynos7870-m10lte_swa_open_00.dtb exynos7870-m10lte_swa_open_01.dtb exynos7870-m10lte_swa_open_02.dtb exynos7870-m10lte_swa_open_03.dtb exynos7870-m10lte_swa_open_04.dtb"
 fi
 
 
-## dtb regex for early mounts remove
+## dtb regex
 
 ## variant 1 (j710 g610 oneui, nontreble aosp)
 if [ "$type" == "1" ]; then
 sed -i 's/	firmware {\n	   android {\n		 compatible = "android,firmware";\n		  fstab {\n			 compatible = "android,fstab";\n			 system {\n				  compatible = "android,system";\n				  dev = "\/dev\/block\/platform\/13540000\.dwmmc0\/by-name\/SYSTEM";\n				  type = "ext4";\n				  mnt_flags = "ro";\n				  fsmgr_flags = "wait";\n				 };\n		   };\n	  };\n	};\n\n	reserved-memory {/	reserved-memory {/g' arch/arm64/boot/"$dtbname"
-elif [ "$type" == "3" ]; then
-sed -i 's/	firmware {\n	   android {\n		 compatible = "android,firmware";\n		  fstab {\n			 compatible = "android,fstab";\n			 system {\n				  compatible = "android,system";\n				  dev = "\/dev\/block\/platform\/13540000\.dwmmc0\/by-name\/SYSTEM";\n				  type = "ext4";\n				  mnt_flags = "ro";\n				  fsmgr_flags = "wait";\n				 };\n		   };\n	  };\n	};\n\n	reserved-memory {/	reserved-memory {/g' arch/arm64/boot/"$dtbname"
 ## variant 2 (j710 g610 oneui treble, treble aosp)
-if [ "$type" == "2" ]; then
-sed -i 's/	firmware {\n	   android {\n		 compatible = "android,firmware";\n		  fstab {\n			 compatible = "android,fstab";\n			 system {\n				  compatible = "android,system";\n				  dev = "\/dev\/block\/platform\/13540000\.dwmmc0\/by-name\/SYSTEM";\n				  type = "ext4";\n				  mnt_flags = "ro";\n				  fsmgr_flags = "wait";\n				 };\n		   };\n	  };\n	};/	firmware {\n	   android {\n		 compatible = "android,firmware";\n		  fstab {\n			 compatible = "android,fstab";\n			 system {\n				  compatible = "android,system";\n				  dev = "\/dev\/block\/platform\/13540000\.dwmmc0\/by-name\/SYSTEM";\n				  type = "ext4";\n				  mnt_flags = "ro";\n				  fsmgr_flags = "wait";\n				 };\n			 vendor {\n				  compatible = "android,vendor";\n				  dev = "\/dev\/block\/platform\/13540000\.dwmmc0\/by-name\/VENDOR";\n				  type = "ext4";\n				  mnt_flags = "ro";\n				  fsmgr_flags = "wait";\n				 };\n		   };\n	  };\n	};/g' arch/arm64/boot/"$dtbname"
-elif [ "$type" == "4" ]; then
+elif [ "$type" == "2" ]; then
 sed -i 's/	firmware {\n	   android {\n		 compatible = "android,firmware";\n		  fstab {\n			 compatible = "android,fstab";\n			 system {\n				  compatible = "android,system";\n				  dev = "\/dev\/block\/platform\/13540000\.dwmmc0\/by-name\/SYSTEM";\n				  type = "ext4";\n				  mnt_flags = "ro";\n				  fsmgr_flags = "wait";\n				 };\n		   };\n	  };\n	};/	firmware {\n	   android {\n		 compatible = "android,firmware";\n		  fstab {\n			 compatible = "android,fstab";\n			 system {\n				  compatible = "android,system";\n				  dev = "\/dev\/block\/platform\/13540000\.dwmmc0\/by-name\/SYSTEM";\n				  type = "ext4";\n				  mnt_flags = "ro";\n				  fsmgr_flags = "wait";\n				 };\n			 vendor {\n				  compatible = "android,vendor";\n				  dev = "\/dev\/block\/platform\/13540000\.dwmmc0\/by-name\/VENDOR";\n				  type = "ext4";\n				  mnt_flags = "ro";\n				  fsmgr_flags = "wait";\n				 };\n		   };\n	  };\n	};/g' arch/arm64/boot/"$dtbname"
 
 ############################################################# Mali version fix
@@ -91,21 +89,17 @@ sed -i 's/CONFIG_DDK_VERSION_OS="q"/"CONFIG_DDK_VERSION_OS="p"/g' arch/arm64/con
 sed -i 's/CONFIG_MALI_R29P0=y/CONFIG_MALI_R28P0=y/g' arch/arm64/configs/"$defconfig"
 
 ############################################################# Treble USB Fix
-if [ "$type" == "1" ]; then
-sed -i 's/CONFIG_USB_ANDROID_SAMSUNG_MTP=y/# CONFIG_USB_ANDROID_SAMSUNG_MTP is not set/g' arch/arm64/configs/"$defconfig"
-elif [ "$type" == "2" ]; then
+if [ "$aosp" == "y" ]; then
 sed -i 's/CONFIG_USB_ANDROID_SAMSUNG_MTP=y/# CONFIG_USB_ANDROID_SAMSUNG_MTP is not set/g' arch/arm64/configs/"$defconfig"
 
 ############################################################# Build dtb and Image
 make "$defconfig"
-make exynos7870-j7xelte_eur_open_00.dtb exynos7870-j7xelte_eur_open_01.dtb exynos7870-j7xelte_eur_open_02.dtb exynos7870-j7xelte_eur_open_03.dtb exynos7870-j7xelte_eur_open_04.dtb
+make $dtbfiles
 ./tools/dtbtool arch/arm64/boot/dts/ -o arch/arm64/boot/dtb
 make -j"$(nproc)"
 
 ############################################################# Treble USB Fix restore
-if [ "$type" == "1" ]; then
-sed -i 's/# CONFIG_USB_ANDROID_SAMSUNG_MTP is not set/CONFIG_USB_ANDROID_SAMSUNG_MTP=y/g' arch/arm64/configs/"$defconfig"
-elif [ "$type" == "2" ]; then
+if [ "$aosp" == "y" ]; then
 sed -i 's/# CONFIG_USB_ANDROID_SAMSUNG_MTP is not set/CONFIG_USB_ANDROID_SAMSUNG_MTP=y/g' arch/arm64/configs/"$defconfig"
 
 ############################################################# Mali version fix restore
@@ -129,18 +123,13 @@ rm security/samsung/defex_lsm/cert/pubkey_eng.der &> /dev/null
 rm security/samsung/defex_lsm/cert/pubkey_user.der &> /dev/null
 rm security/samsung/defex_lsm/defex_packed_rules.bin &> /dev/null
 
-############################################################# early mount stuff revert
+############################################################# dtb regex revert
 
 ## variant 1 (j710 g610 oneui, nontreble aosp) revert
 if [ "$type" == "1" ]; then
 sed -i 's/	reserved-memory {/	firmware {\n	   android {\n		 compatible = "android,firmware";\n		  fstab {\n			 compatible = "android,fstab";\n			 system {\n				  compatible = "android,system";\n				  dev = "\/dev\/block\/platform\/13540000\.dwmmc0\/by-name\/SYSTEM";\n				  type = "ext4";\n				  mnt_flags = "ro";\n				  fsmgr_flags = "wait";\n				 };\n		   };\n	  };\n	};\n\n	reserved-memory {/g' arch/arm64/boot/"$dtbname"
-elif [ "$type" == "3" ]; then
-sed -i 's/	reserved-memory {/	firmware {\n	   android {\n		 compatible = "android,firmware";\n		  fstab {\n			 compatible = "android,fstab";\n			 system {\n				  compatible = "android,system";\n				  dev = "\/dev\/block\/platform\/13540000\.dwmmc0\/by-name\/SYSTEM";\n				  type = "ext4";\n				  mnt_flags = "ro";\n				  fsmgr_flags = "wait";\n				 };\n		   };\n	  };\n	};\n\n	reserved-memory {/g' arch/arm64/boot/"$dtbname"
-
 ## variant 2 (j710 g610 oneui treble, treble aosp)
-if [ "$type" == "2" ]; then
-sed -i 's/	firmware {\n	   android {\n		 compatible = "android,firmware";\n		  fstab {\n			 compatible = "android,fstab";\n			 system {\n				  compatible = "android,system";\n				  dev = "\/dev\/block\/platform\/13540000\.dwmmc0\/by-name\/SYSTEM";\n				  type = "ext4";\n				  mnt_flags = "ro";\n				  fsmgr_flags = "wait";\n				 };\n		   };\n	  };\n	};/	firmware {\n	   android {\n		 compatible = "android,firmware";\n		  fstab {\n			 compatible = "android,fstab";\n			 system {\n				  compatible = "android,system";\n				  dev = "\/dev\/block\/platform\/13540000\.dwmmc0\/by-name\/SYSTEM";\n				  type = "ext4";\n				  mnt_flags = "ro";\n				  fsmgr_flags = "wait";\n				 };\n			 vendor {\n				  compatible = "android,vendor";\n				  dev = "\/dev\/block\/platform\/13540000\.dwmmc0\/by-name\/VENDOR";\n				  type = "ext4";\n				  mnt_flags = "ro";\n				  fsmgr_flags = "wait";\n				 };\n		   };\n	  };\n	};/g' arch/arm64/boot/"$dtbname"
-elif [ "$type" == "4" ]; then
+elif [ "$type" == "2" ]; then
 sed -i 's/	firmware {\n	   android {\n		 compatible = "android,firmware";\n		  fstab {\n			 compatible = "android,fstab";\n			 system {\n				  compatible = "android,system";\n				  dev = "\/dev\/block\/platform\/13540000\.dwmmc0\/by-name\/SYSTEM";\n				  type = "ext4";\n				  mnt_flags = "ro";\n				  fsmgr_flags = "wait";\n				 };\n		   };\n	  };\n	};/	firmware {\n	   android {\n		 compatible = "android,firmware";\n		  fstab {\n			 compatible = "android,fstab";\n			 system {\n				  compatible = "android,system";\n				  dev = "\/dev\/block\/platform\/13540000\.dwmmc0\/by-name\/SYSTEM";\n				  type = "ext4";\n				  mnt_flags = "ro";\n				  fsmgr_flags = "wait";\n				 };\n			 vendor {\n				  compatible = "android,vendor";\n				  dev = "\/dev\/block\/platform\/13540000\.dwmmc0\/by-name\/VENDOR";\n				  type = "ext4";\n				  mnt_flags = "ro";\n				  fsmgr_flags = "wait";\n				 };\n		   };\n	  };\n	};/g' arch/arm64/boot/"$dtbname"
 
 ############################################################# end
