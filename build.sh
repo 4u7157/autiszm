@@ -31,11 +31,11 @@ dtbname="exynos7870-j7xelte_common.dtsi"
 dtbfiles="exynos7870-j7xelte_eur_open_00.dtb exynos7870-j7xelte_eur_open_01.dtb exynos7870-j7xelte_eur_open_02.dtb exynos7870-j7xelte_eur_open_03.dtb exynos7870-j7xelte_eur_open_04.dtb"
 
 elif [ "$defconfig" == "exynos7870-gtaxllte_defconfig" ]; then
-read -p "Non Treble (1) or Treble(2): " type
+read -p "Non Treble (1) or Treble(2): " type2
 dtbname="exynos7870-gtaxl_common.dtsi"
 
 elif [ "$defconfig" == "exynos7870-gtaxlwifi_defconfig" ]; then
-read -p "Non Treble (1) or Treble(2): " type
+read -p "Non Treble (1) or Treble(2): " type2
 dtbname="exynos7870-gtaxl_common.dtsi"
 
 elif [ "$defconfig" == "exynos7870-j7velte_defconfig" ]; then
@@ -47,7 +47,7 @@ read -p "Non Treble (1) or Treble(2): " type1
 dtbname="exynos7870-on7xelte_common.dtsi"
 
 elif [ "$defconfig" == "exynos7870-a3y17lte_defconfig" ]; then
-read -p "Non Treble (1) or Treble(2): " type
+read -p "Non Treble (1) or Treble(2): " type2
 dtbname="exynos7870-a3y17lte_common.dtsi"
 
 elif [ "$defconfig" == "exynos7870-j5y17lte_defconfig" ]; then
@@ -76,12 +76,19 @@ fi
 
 ## dtb regex
 
+## type 1
+
 ## variant 1 (j710 g610 oneui, nontreble aosp)
 if [ "$type1" == "1" ]; then
 sed -i 's/	firmware {\n	   android {\n		 compatible = "android,firmware";\n		  fstab {\n			 compatible = "android,fstab";\n			 system {\n				  compatible = "android,system";\n				  dev = "\/dev\/block\/platform\/13540000\.dwmmc0\/by-name\/SYSTEM";\n				  type = "ext4";\n				  mnt_flags = "ro";\n				  fsmgr_flags = "wait";\n				 };\n		   };\n	  };\n	};\n\n	reserved-memory {/	reserved-memory {/g' arch/arm64/boot/"$dtbname"
 ## variant 2 (j710 g610 oneui treble, treble aosp)
 elif [ "$type1" == "2" ]; then
 sed -i 's/	firmware {\n	   android {\n		 compatible = "android,firmware";\n		  fstab {\n			 compatible = "android,fstab";\n			 system {\n				  compatible = "android,system";\n				  dev = "\/dev\/block\/platform\/13540000\.dwmmc0\/by-name\/SYSTEM";\n				  type = "ext4";\n				  mnt_flags = "ro";\n				  fsmgr_flags = "wait";\n				 };\n		   };\n	  };\n	};/	firmware {\n	   android {\n		 compatible = "android,firmware";\n		  fstab {\n			 compatible = "android,fstab";\n			 system {\n				  compatible = "android,system";\n				  dev = "\/dev\/block\/platform\/13540000\.dwmmc0\/by-name\/SYSTEM";\n				  type = "ext4";\n				  mnt_flags = "ro";\n				  fsmgr_flags = "wait";\n				 };\n			 vendor {\n				  compatible = "android,vendor";\n				  dev = "\/dev\/block\/platform\/13540000\.dwmmc0\/by-name\/VENDOR";\n				  type = "ext4";\n				  mnt_flags = "ro";\n				  fsmgr_flags = "wait";\n				 };\n		   };\n	  };\n	};/g' arch/arm64/boot/"$dtbname"
+
+## type 2 (missing mount)
+
+if [ "$type2" == "2"]; then
+sed -i 's/	reserved-memory {/	firmware {\n	   android {\n		 compatible = "android,firmware";\n		  fstab {\n			 compatible = "android,fstab";\n			 system {\n				  compatible = "android,system";\n				  dev = "\/dev\/block\/platform\/13540000\.dwmmc0\/by-name\/SYSTEM";\n				  type = "ext4";\n				  mnt_flags = "ro";\n				  fsmgr_flags = "wait";\n				 };\n			 vendor {\n				  compatible = "android,vendor";\n				  dev = "\/dev\/block\/platform\/13540000\.dwmmc0\/by-name\/VENDOR";\n				  type = "ext4";\n				  mnt_flags = "ro";\n				  fsmgr_flags = "wait";\n				 };\n		   };\n	  };\n	};\n\n	reserved-memory {/g' arch/arm64/boot/"$dtbname"
 
 ############################################################# Mali version fix
 if [ "$major" == "p" ]; then
@@ -132,6 +139,10 @@ sed -i 's/	reserved-memory {/	firmware {\n	   android {\n		 compatible = "androi
 elif [ "$type1" == "2" ]; then
 sed -i 's/	firmware {\n	   android {\n		 compatible = "android,firmware";\n		  fstab {\n			 compatible = "android,fstab";\n			 system {\n				  compatible = "android,system";\n				  dev = "\/dev\/block\/platform\/13540000\.dwmmc0\/by-name\/SYSTEM";\n				  type = "ext4";\n				  mnt_flags = "ro";\n				  fsmgr_flags = "wait";\n				 };\n		   };\n	  };\n	};/	firmware {\n	   android {\n		 compatible = "android,firmware";\n		  fstab {\n			 compatible = "android,fstab";\n			 system {\n				  compatible = "android,system";\n				  dev = "\/dev\/block\/platform\/13540000\.dwmmc0\/by-name\/SYSTEM";\n				  type = "ext4";\n				  mnt_flags = "ro";\n				  fsmgr_flags = "wait";\n				 };\n			 vendor {\n				  compatible = "android,vendor";\n				  dev = "\/dev\/block\/platform\/13540000\.dwmmc0\/by-name\/VENDOR";\n				  type = "ext4";\n				  mnt_flags = "ro";\n				  fsmgr_flags = "wait";\n				 };\n		   };\n	  };\n	};/g' arch/arm64/boot/"$dtbname"
 
+## type 2 (missing mount) revert
+
+if [ "$type2" == "2"]; then
+sed -i 's/	firmware {\n	   android {\n		 compatible = "android,firmware";\n		  fstab {\n			 compatible = "android,fstab";\n			 system {\n				  compatible = "android,system";\n				  dev = "\/dev\/block\/platform\/13540000\.dwmmc0\/by-name\/SYSTEM";\n				  type = "ext4";\n				  mnt_flags = "ro";\n				  fsmgr_flags = "wait";\n				 };\n			 vendor {\n				  compatible = "android,vendor";\n				  dev = "\/dev\/block\/platform\/13540000\.dwmmc0\/by-name\/VENDOR";\n				  type = "ext4";\n				  mnt_flags = "ro";\n				  fsmgr_flags = "wait";\n				 };\n		   };\n	  };\n	};\n\n	reserved-memory {/	reserved-memory {/g' arch/arm64/boot/"$dtbname"
 ############################################################# end
 echo "Done, output can be found in output/"
 fi
