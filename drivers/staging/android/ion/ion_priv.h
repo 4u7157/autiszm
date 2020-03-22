@@ -26,12 +26,15 @@
 #include <linux/sched.h>
 #include <linux/shrinker.h>
 #include <linux/types.h>
+<<<<<<< HEAD
 #include <linux/semaphore.h>
 #include <linux/vmalloc.h>
 #include <linux/dma-direction.h>
 #include <trace/events/ion.h>
 #include <asm/cacheflush.h>
 
+=======
+>>>>>>> 48652cb4c... android march 18 d0d738d5750c8d91cfd3cd56850b932cda191db1
 #ifdef CONFIG_ION_POOL_CACHE_POLICY
 #include <asm/cacheflush.h>
 #endif

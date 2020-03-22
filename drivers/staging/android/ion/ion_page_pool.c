@@ -32,7 +32,10 @@ void *ion_page_pool_alloc_pages(struct ion_page_pool *pool)
 		return NULL;
 	ion_page_pool_alloc_set_cache_policy(pool, page);
 
+<<<<<<< HEAD
 #ifndef CONFIG_ION_EXYNOS
+=======
+>>>>>>> 48652cb4c... android march 18 d0d738d5750c8d91cfd3cd56850b932cda191db1
 	ion_pages_sync_for_device(NULL, page, PAGE_SIZE << pool->order,
 						DMA_BIDIRECTIONAL);
 #endif
@@ -43,7 +46,10 @@ static void ion_page_pool_free_pages(struct ion_page_pool *pool,
 				     struct page *page)
 {
 	ion_page_pool_free_set_cache_policy(pool, page);
+<<<<<<< HEAD
 	ion_clear_page_clean(page);
+=======
+>>>>>>> 48652cb4c... android march 18 d0d738d5750c8d91cfd3cd56850b932cda191db1
 	__free_pages(page, pool->order);
 }
 

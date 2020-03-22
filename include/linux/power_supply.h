@@ -16,6 +16,8 @@
 #include <linux/wakelock.h>
 #include <linux/workqueue.h>
 #include <linux/leds.h>
+#include <linux/spinlock.h>
+#include <linux/notifier.h>
 #include <linux/types.h>
 
 struct device;
@@ -175,9 +177,10 @@ enum power_supply_property {
 	POWER_SUPPLY_PROP_TIME_TO_FULL_AVG,
 	POWER_SUPPLY_PROP_TYPE, /* use power_supply.type instead */
 	POWER_SUPPLY_PROP_SCOPE,
-	POWER_SUPPLY_PROP_SYSTEM_TEMP_LEVEL,
-	POWER_SUPPLY_PROP_RESISTANCE,
+	POWER_SUPPLY_PROP_CHARGE_TERM_CURRENT,
+	POWER_SUPPLY_PROP_CALIBRATE,
 	/* Local extensions */
+	POWER_SUPPLY_PROP_USB_HC,
 	POWER_SUPPLY_PROP_USB_OTG,
 	POWER_SUPPLY_PROP_CHARGE_ENABLED,
 	/* Local extensions of type int64_t */

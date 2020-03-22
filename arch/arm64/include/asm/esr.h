@@ -140,13 +140,13 @@
 #define ESR_ELx_COND_MASK	(UL(0xF) << ESR_ELx_COND_SHIFT)
 #define ESR_ELx_WFx_ISS_WFE	(UL(1) << 0)
 
+/* The following definitions are ported back from kernel 4.4 for esr_get_class_string */
+
 #ifndef __ASSEMBLY__
 #include <asm/types.h>
 
 const char *esr_get_class_string(u32 esr);
 #endif /* __ASSEMBLY */
-
-/* The following definitions are ported back from kernel 4.4 for esr_get_class_string */
 
 #define ESR_EL1_EC_MAX		(0x3F)
 
@@ -189,11 +189,5 @@ const char *esr_get_class_string(u32 esr);
 
 #define ESR_ELx_SYS64_ISS_SYS_CNTFRQ	(ESR_ELx_SYS64_ISS_SYS_VAL(3, 3, 0, 14, 0) | \
 					 ESR_ELx_SYS64_ISS_DIR_READ)
-
-#ifndef __ASSEMBLY__
-#include <asm/types.h>
-
-const char *esr_get_class_string(u32 esr);
-#endif /* __ASSEMBLY */
 
 #endif /* __ASM_ESR_H */

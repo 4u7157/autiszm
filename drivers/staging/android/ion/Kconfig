@@ -40,6 +40,7 @@ config ION_POOL_CACHE_POLICY
 	help
 	  Choose this option if need to explicity set cache policy of the
 	  pages in the page pool.
+<<<<<<< HEAD
 
 config ION_EXYNOS
 	tristate "Ion for Exynos"
@@ -60,3 +61,5 @@ config ION_EXYNOS_STAT_LOG
 if ION_EXYNOS
 source drivers/staging/android/ion/exynos/Kconfig
 endif
+=======
+>>>>>>> 48652cb4c... android march 18 d0d738d5750c8d91cfd3cd56850b932cda191db1

@@ -411,6 +411,7 @@ static int pstore_write_buf_user_compat(enum pstore_type_id type,
 			       bool compressed, size_t size,
 			       struct pstore_info *psi)
 {
+	unsigned long flags = 0;
 	size_t i, bufsize = size;
 	long ret = 0;
 
@@ -418,6 +419,7 @@ static int pstore_write_buf_user_compat(enum pstore_type_id type,
 		return -EFAULT;
 	if (bufsize > psinfo->bufsize)
 		bufsize = psinfo->bufsize;
+	spin_lock_irqsave(&psinfo->buf_lock, flags);
 	for (i = 0; i < size; ) {
 		size_t c = min(size - i, bufsize);
 
@@ -436,7 +438,7 @@ static int pstore_write_buf_user_compat(enum pstore_type_id type,
 			break;
 		i += c;
 	}
-
+	spin_unlock_irqrestore(&psinfo->buf_lock, flags);
 	return unlikely(ret < 0) ? ret : size;
 }
 

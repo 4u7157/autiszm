@@ -33,6 +33,7 @@
 #else
 #define MAX_WAKEUP_REASON_IRQS 32
 #endif
+
 static int irq_list[MAX_WAKEUP_REASON_IRQS];
 static int irqcount;
 static bool suspend_abort;

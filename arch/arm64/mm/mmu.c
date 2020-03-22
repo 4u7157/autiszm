@@ -180,15 +180,13 @@ static void alloc_init_pte(pmd_t *pmd, unsigned long addr,
 {
 	pte_t *pte;
 
-	if (pmd_none(*pmd) || pmd_sect(*pmd)) {
+	if (pmd_none(*pmd) || pmd_bad(*pmd)) {
 		pte = alloc(PTRS_PER_PTE * sizeof(pte_t));
-		if (pmd_sect(*pmd)) {
+		if (pmd_sect(*pmd))
 			split_pmd(pmd, pte);
-		}
 		__pmd_populate(pmd, __pa(pte), PMD_TYPE_TABLE);
 		flush_tlb_all();
 	}
-	BUG_ON(pmd_bad(*pmd));
 
 
 	pte = pte_offset_kernel(pmd, addr);

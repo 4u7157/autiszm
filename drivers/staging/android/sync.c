@@ -175,46 +175,6 @@ err:
 	return NULL;
 }
 
-static void sync_fence_free(struct kref *kref)
-{
-	struct sync_fence *fence = container_of(kref, struct sync_fence, kref);
-	int i;
-
-	for (i = 0; i < fence->num_fences; ++i)
-		fence_put(fence->cbs[i].sync_pt);
-
-	kfree(fence);
-}
-
-static LLIST_HEAD(delayed_free_list);
-
-static void sync_fence_free_work(struct work_struct *unused)
-{
-	struct llist_node *node, *next;
-
-	for (node = llist_del_all(&delayed_free_list); node; node = next) {
-		struct sync_fence *fence;
-
-		next = llist_next(node);
-
-		fence = llist_entry(node, struct sync_fence, rmnode);
-		sync_fence_free(&fence->kref);
-	}
-}
-
-static DECLARE_DELAYED_WORK(sync_fence_delayed_work, sync_fence_free_work);
-
-static void sync_fence_delayed_free(struct kref *kref) {
-	struct sync_fence *fence = container_of(kref, struct sync_fence, kref);
-
-	/*
-	 * pend the worker for a jiffie to prevent superfluous invokation of
-	 * workers.
-	 */
-	llist_add(&fence->rmnode, &delayed_free_list);
-	schedule_delayed_work(&sync_fence_delayed_work, 1);
-}
-
 static void fence_check_cb_func(struct fence *f, struct fence_cb *cb)
 {
 	struct sync_fence_cb *check;
@@ -225,8 +185,6 @@ static void fence_check_cb_func(struct fence *f, struct fence_cb *cb)
 
 	if (atomic_dec_and_test(&fence->status))
 		wake_up_all(&fence->wq);
-
-	kref_put(&fence->kref, sync_fence_delayed_free);
 }
 
 /* TODO: implement a create which takes more that one sync_pt */
@@ -238,17 +196,14 @@ struct sync_fence *sync_fence_create(const char *name, struct sync_pt *pt)
 	if (fence == NULL)
 		return NULL;
 
-	kref_get(&fence->kref);
 	fence->num_fences = 1;
 	atomic_set(&fence->status, 1);
 
 	fence->cbs[0].sync_pt = &pt->base;
 	fence->cbs[0].fence = fence;
 	if (fence_add_callback(&pt->base, &fence->cbs[0].cb,
-			       fence_check_cb_func)) {
+			       fence_check_cb_func))
 		atomic_dec(&fence->status);
-		kref_put(&fence->kref, sync_fence_free);
-	}
 
 	sync_fence_debug_add(fence);
 
@@ -293,7 +248,6 @@ static void sync_fence_add_pt(struct sync_fence *fence,
 	fence->cbs[*i].fence = fence;
 
 	if (!fence_add_callback(pt, &fence->cbs[*i].cb, fence_check_cb_func)) {
-		kref_get(&fence->kref);
 		fence_get(pt);
 		(*i)++;
 	}
@@ -312,7 +266,6 @@ struct sync_fence *sync_fence_merge(const char *name,
 		return NULL;
 
 	atomic_set(&fence->status, num_fences);
-	kref_get(&fence->kref);
 
 	/*
 	 * Assume sync_fence a and b are both ordered and have no
@@ -354,7 +307,6 @@ struct sync_fence *sync_fence_merge(const char *name,
 		atomic_sub(num_fences - i, &fence->status);
 	fence->num_fences = i;
 
-	kref_put(&fence->kref, sync_fence_free);
 	sync_fence_debug_add(fence);
 	return fence;
 }
@@ -416,10 +368,6 @@ int sync_fence_cancel_async(struct sync_fence *fence,
 }
 EXPORT_SYMBOL(sync_fence_cancel_async);
 
-#ifdef CONFIG_MALI_SEC_JOB_STATUS_CHECK
-extern int gpu_job_fence_status_dump(struct sync_fence *timeout_fence);
-#endif
-
 int sync_fence_wait(struct sync_fence *fence, long timeout)
 {
 	long ret;
@@ -442,17 +390,8 @@ int sync_fence_wait(struct sync_fence *fence, long timeout)
 		return ret;
 	} else if (ret == 0) {
 		if (timeout) {
-#if defined(CONFIG_SAMSUNG_PRODUCT_SHIP)
-			pr_info("fence timeout on [%pK] after %dms\n", fence,
+			pr_info("fence timeout on [%p] after %dms\n", fence,
 				jiffies_to_msecs(timeout));
-#else
-			pr_info("fence timeout on [%pK] after %dms\n", fence,
-				jiffies_to_msecs(timeout));
-#endif
-#ifdef CONFIG_MALI_SEC_JOB_STATUS_CHECK
-			pr_info("GPU JOB STATUS DUMP\n");
-			gpu_job_fence_status_dump(fence);
-#endif
 			sync_dump();
 		}
 		return -ETIME;
@@ -460,15 +399,7 @@ int sync_fence_wait(struct sync_fence *fence, long timeout)
 
 	ret = atomic_read(&fence->status);
 	if (ret) {
-#if defined(CONFIG_SAMSUNG_PRODUCT_SHIP)
-		pr_info("fence error %ld on [%pK]\n", ret, fence);
-#else
 		pr_info("fence error %ld on [%p]\n", ret, fence);
-#endif
-#ifdef CONFIG_MALI_SEC_JOB_STATUS_CHECK
-		pr_info("GPU JOB STATUS DUMP\n");
-		gpu_job_fence_status_dump(fence);
-#endif
 		sync_dump();
 	}
 	return ret;
@@ -593,20 +524,25 @@ static const struct fence_ops android_fence_ops = {
 	.timeline_value_str = android_fence_timeline_value_str,
 };
 
+static void sync_fence_free(struct kref *kref)
+{
+	struct sync_fence *fence = container_of(kref, struct sync_fence, kref);
+	int i;
+
+	for (i = 0; i < fence->num_fences; ++i) {
+		fence_remove_callback(fence->cbs[i].sync_pt, &fence->cbs[i].cb);
+		fence_put(fence->cbs[i].sync_pt);
+	}
+
+	kfree(fence);
+}
+
 static int sync_fence_release(struct inode *inode, struct file *file)
 {
 	struct sync_fence *fence = file->private_data;
-	int i, status = atomic_read(&fence->status);
 
 	sync_fence_debug_remove(fence);
 
-	for (i = 0; i < fence->num_fences; ++i) {
-		if (status) {
-			if (fence_remove_callback(fence->cbs[i].sync_pt,
-					      &fence->cbs[i].cb))
-				kref_put(&fence->kref, sync_fence_free);
-		}
-	}
 	kref_put(&fence->kref, sync_fence_free);
 	return 0;
 }
