@@ -909,6 +909,7 @@ static int ip6_dst_lookup_tail(struct sock *sk,
 	struct rt6_info *rt;
 #endif
 	int err;
+	int flags = 0;
 
 	if (*dst == NULL)
 		*dst = ip6_route_output(net, sk, fl6);
@@ -923,6 +924,9 @@ static int ip6_dst_lookup_tail(struct sock *sk,
 					  &fl6->saddr);
 		if (err)
 			goto out_err_release;
+
+		if (fl6->flowi6_oif)
+			flags |= RT6_LOOKUP_F_IFACE;
 	}
 
 #ifdef CONFIG_IPV6_OPTIMISTIC_DAD
@@ -1318,7 +1322,7 @@ emsgsize:
 	    (skb_queue_len(&sk->sk_write_queue) <= 1) &&
 	    (sk->sk_protocol == IPPROTO_UDP) &&
 	    (rt->dst.dev->features & NETIF_F_UFO) &&
-	    (sk->sk_type == SOCK_DGRAM))) {
+	    (sk->sk_type == SOCK_DGRAM) && !udp_get_no_check6_tx(sk))) {
 		err = ip6_ufo_append_data(sk, getfrag, from, length,
 					  hh_len, fragheaderlen,
 					  transhdrlen, mtu, flags, rt);
