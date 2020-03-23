@@ -1,0 +1,27 @@
+version: v1.0
+name: kernel
+agent:
+  machine:
+    type: e1-standard-8
+    os_image: ubuntu1804
+blocks:
+  - name: Test
+    task:
+      jobs:
+        - name: kernel
+          commands:
+            - make clean &> /dev/null
+            - make mrproper &> /dev/null
+            - 'wget https://releases.linaro.org/components/toolchain/binaries/latest-7/aarch64-linux-gnu/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu.tar.xz'
+            - tar -xvf gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu.tar.xz
+            - export ARCH=arm64
+            - export CROSS_COMPILE=gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-
+            - export USE_CCACHE=1
+            - export ANDROID_MAJOR_VERSION=q
+            - make exynos7870-j7xelte_defconfig
+            - make exynos7870-j7xelte_eur_open_00.dtb exynos7870-j7xelte_eur_open_01.dtb exynos7870-j7xelte_eur_open_02.dtb exynos7870-j7xelte_eur_open_03.dtb exynos7870-j7xelte_eur_open_04.dtb
+            - ./tools/dtbtool arch/arm64/boot/dts/ -o arch/arm64/boot/dtb
+            - make -j"$(nproc --all)"
+promotions:
+  - name: Promotion 1
+    pipeline_file: pipeline_2.yml
