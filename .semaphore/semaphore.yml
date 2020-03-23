@@ -10,8 +10,6 @@ blocks:
       jobs:
         - name: kernel
           commands:
-            - make clean &> /dev/null
-            - make mrproper &> /dev/null
             - 'wget https://releases.linaro.org/components/toolchain/binaries/latest-7/aarch64-linux-gnu/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu.tar.xz'
             - tar -xvf gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu.tar.xz
             - export ARCH=arm64
