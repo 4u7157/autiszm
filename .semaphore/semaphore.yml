@@ -12,7 +12,7 @@ blocks:
           commands:
             - sudo apt-get update
             - sudo apt-get install -y bc
-            - git clone --depth=1 https://github.com/yEsPaP/autiszm.git -b 2
+            - git clone --depth=1 https://github.com/yEsPaP/autiszm.git -b 3
             - cd autiszm
             - 'wget https://releases.linaro.org/components/toolchain/binaries/latest-7/aarch64-linux-gnu/gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu.tar.xz'
             - tar -xf gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu.tar.xz
