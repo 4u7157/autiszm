@@ -20,9 +20,9 @@ blocks:
             - export CROSS_COMPILE=gcc-linaro-7.5.0-2019.12-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-
             - export USE_CCACHE=1
             - export ANDROID_MAJOR_VERSION=q
-            - make exynos7870-a6lte_defconfig
+            - make exynos7870-j7xelte_defconfig
 ##            - make exynos7870-j7xelte_eur_open_00.dtb exynos7870-j7xelte_eur_open_01.dtb exynos7870-j7xelte_eur_open_02.dtb exynos7870-j7xelte_eur_open_03.dtb exynos7870-j7xelte_eur_open_04.dtb
 ##            - ./tools/dtbtool arch/arm64/boot/dts/ -o arch/arm64/boot/dtb
             - make -j"$(nproc --all)"
 ##            - artifact push job arch/arm64/boot/dtb
-##            - artifact push job arch/arm64/boot/Image
+            - artifact push job arch/arm64/boot/Image
