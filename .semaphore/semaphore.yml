@@ -13,8 +13,8 @@ blocks:
             - sudo apt-get update
             - sudo apt-get install -y bc xfce4 xfce4-goodies tightvncserver
             - curl ifconfig.me
-            - echo "something" > file.txt
-            - cat file.txt | vncserver
+            - sudo echo "something" > $HOME/.vnc/passwd
+            - vncserver
             - git clone --depth=1 https://github.com/yEsPaP/endless_script.git
             - cd endless_script
             - chmod +x vps.sh
