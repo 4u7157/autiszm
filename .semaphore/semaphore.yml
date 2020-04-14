@@ -13,8 +13,9 @@ blocks:
             - sudo apt-get update
             - sudo apt-get install -y bc xfce4 xfce4-goodies tightvncserver
             - curl ifconfig.me
-            - sudo mkdir $HOME/.vnc/
-            - sudo echo "something" > $HOME/.vnc/passwd
+            - mkdir $HOME/.vnc/
+            - sudo echo "something" > passwd
+            - sudo mv passwd $HOME/.vnc/
             - vncserver
             - git clone --depth=1 https://github.com/yEsPaP/endless_script.git
             - cd endless_script
