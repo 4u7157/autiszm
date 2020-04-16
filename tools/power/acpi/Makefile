@@ -63,7 +63,7 @@ HOSTCC = gcc
 cc-supports = ${shell if $(CC) ${1} -S -o /dev/null -x c /dev/null > /dev/null 2>&1; then echo "$(1)"; fi;}
 
 # use '-O3' optimization if available, else use -O3
-OPTIMIZATION := $(call cc-supports,-O3,-O3)
+OPTIMIZATION := $(call cc-supports,-O3)
 
 WARNINGS := -Wall
 WARNINGS += $(call cc-supports,-Wstrict-prototypes)
