@@ -5,7 +5,7 @@
  *
  * You can amuse yourself by compiling with:
  * gcc -std=gnu99 -nostdlib
- *     -Os -fno-asynchronous-unwind-tables -flto -lgcc_s
+ *     -O3 -fno-asynchronous-unwind-tables -flto -lgcc_s
  *      vdso_standalone_test_x86.c parse_vdso.c
  * to generate a small binary.  On x86_64, you can omit -lgcc_s
  * if you want the binary to be completely standalone.
