@@ -87,7 +87,7 @@ struct uhid_get_report_req {
 	__u32 id;
 	__u8 rnum;
 	__u8 rtype;
-} __attribute__((__packed__));
+} __attribute__((__packed__, aligned(2)));
 
 struct uhid_get_report_reply_req {
 	__u32 id;
