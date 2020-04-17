@@ -740,7 +740,7 @@ struct v4l2_ext_control32 {
 		__s64 value64;
 		compat_caddr_t string; /* actually char * */
 	};
-} __attribute__ ((packed));
+} __attribute__ ((packed, aligned(2)));
 
 /* Return true if this control is a pointer type. */
 static inline bool ctrl_is_pointer(struct file *file, u32 id)
