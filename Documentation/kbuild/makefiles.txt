@@ -297,7 +297,7 @@ more details, with real examples.
 
 	Example:
 		# drivers/acpi/Makefile
-		ccflags-y := -O3
+		ccflags-y := -Os
 		ccflags-$(CONFIG_ACPI_DEBUG) += -DACPI_DEBUG_OUTPUT
 
 	This variable is necessary because the top Makefile owns the
