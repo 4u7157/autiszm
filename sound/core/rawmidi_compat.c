@@ -28,7 +28,7 @@ struct snd_rawmidi_params32 {
 	u32 avail_min;
 	unsigned int no_active_sensing; /* avoid bit-field */
 	unsigned char reserved[16];
-} __attribute__((packed));
+} __attribute__((packed, aligned(2)));
 
 static int snd_rawmidi_ioctl_params_compat(struct snd_rawmidi_file *rfile,
 					   struct snd_rawmidi_params32 __user *src)
