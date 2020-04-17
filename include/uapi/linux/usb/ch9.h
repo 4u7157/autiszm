@@ -188,7 +188,7 @@ struct usb_ctrlrequest {
 	__le16 wValue;
 	__le16 wIndex;
 	__le16 wLength;
-} __attribute__ ((packed));
+} __attribute__ ((packed, aligned(2)));
 
 /*-------------------------------------------------------------------------*/
 
