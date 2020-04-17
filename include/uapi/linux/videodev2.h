@@ -1296,7 +1296,7 @@ struct v4l2_ext_control {
 		__u32 __user *p_u32;
 		void __user *ptr;
 	};
-} __attribute__ ((packed));
+} __attribute__ ((packed, aligned(2)));
 
 struct v4l2_ext_controls {
 	__u32 ctrl_class;
