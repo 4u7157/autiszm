@@ -760,7 +760,7 @@ struct usb_bos_descriptor {
 
 	__le16 wTotalLength;
 	__u8  bNumDeviceCaps;
-} __attribute__((packed));
+} __attribute__((packed, aligned(2)));
 
 #define USB_DT_BOS_SIZE		5
 /*-------------------------------------------------------------------------*/
