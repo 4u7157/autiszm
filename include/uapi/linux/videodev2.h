@@ -1791,7 +1791,7 @@ struct v4l2_pix_format_mplane {
 	__u8				num_planes;
 	__u8				flags;
 	__u8				reserved[10];
-} __attribute__ ((packed));
+} __attribute__ ((packed, aligned(2)));
 
 /**
  * struct v4l2_sdr_format - SDR format definition
