@@ -212,7 +212,7 @@ ftrace_pop_return_trace(struct ftrace_graph_ret *trace, unsigned long *ret,
 	 * the function graph trace will fail. This test detects this
 	 * case.
 	 *
-	 * Currently, x86_32 with optimize for size (-O3) makes the latest
+	 * Currently, x86_32 with optimize for size (-Os) makes the latest
 	 * gcc do the above.
 	 *
 	 * Note, -mfentry does not use frame pointers, and this test
