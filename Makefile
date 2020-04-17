@@ -478,6 +478,7 @@ asm-generic:
 	            src=uapi/asm obj=arch/$(SRCARCH)/include/generated/uapi/asm
 
 export ANDROID_VERSION=100000
+export PLATFORM_VERSION=10
 KBUILD_CFLAGS += -DANDROID_VERSION=100000
 
 PHONY += replace_dirs
