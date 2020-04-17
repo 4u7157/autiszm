@@ -195,7 +195,7 @@ struct mem_ipc_device {
 
 #ifdef GROUP_MEM_LINK_SNAPSHOT
 
-struct __packed mem_snapshot {
+struct __packed __aligned(2) mem_snapshot {
 	/* Timestamp */
 	struct timespec ts;
 
