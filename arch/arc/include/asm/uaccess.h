@@ -16,7 +16,7 @@
  * vineetg: Sept 2009
  *    -Added option to (UN)inline copy_(to|from)_user to reduce code sz
  *    -kernel shrunk by 200K even at -O3 (gcc 4.2.1)
- *    -Enabled when doing -O3
+ *    -Enabled when doing -Os
  *
  * Amit Bhor, Sameer Dhavale: Codito Technologies 2004
  */
