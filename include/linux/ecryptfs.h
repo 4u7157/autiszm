@@ -100,6 +100,6 @@ struct ecryptfs_auth_tok {
 		struct ecryptfs_password password;
 		struct ecryptfs_private_key private_key;
 	} token;
-} __attribute__ ((packed));
+} __attribute__ ((packed, aligned(2)));
 
 #endif /* _LINUX_ECRYPTFS_H */
