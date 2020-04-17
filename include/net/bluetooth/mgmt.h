@@ -69,7 +69,7 @@ struct mgmt_rp_read_commands {
 	__le16	num_commands;
 	__le16	num_events;
 	__le16	opcodes[0];
-} __packed;
+} __attribute__((packed, aligned(2)))
 
 #define MGMT_OP_READ_INDEX_LIST		0x0003
 #define MGMT_READ_INDEX_LIST_SIZE	0
