@@ -62,7 +62,7 @@ struct nc_header {		// packed:
 	// all else is optional, and must start with:
 	// __le16	vendorId;	// from usb-if
 	// __le16	productId;
-} __packed;
+} __packed __aligned(2);
 
 #define	PAD_BYTE	((unsigned char)0xAC)
 
