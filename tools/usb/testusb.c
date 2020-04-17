@@ -91,7 +91,7 @@ struct usb_device_descriptor {
 	__u8  iProduct;
 	__u8  iSerialNumber;
 	__u8  bNumConfigurations;
-} __attribute__ ((packed));
+} __attribute__ ((packed, aligned(2)));
 
 struct usb_interface_descriptor {
 	__u8  bLength;
