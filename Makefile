@@ -478,6 +478,7 @@ asm-generic:
 	            src=uapi/asm obj=arch/$(SRCARCH)/include/generated/uapi/asm
 
 export PLATFORM_VERSION_NUMBER=100000
+export PLATFORM_VERSION=10
 export MAJOR_VERSION=q
 export ANDROID_VERSION=$(PLATFORM_VERSION_NUMBER)
 export ANDROID_MAJOR_VERSION=$(MAJOR_VERSION)
