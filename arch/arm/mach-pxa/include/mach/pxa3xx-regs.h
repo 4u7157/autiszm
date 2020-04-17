@@ -146,7 +146,7 @@
 #define ACCR_HSS_MASK		(0x3 << 14)	/* System Bus-Clock Frequency Select */
 #define ACCR_DMCFS_MASK		(0x3 << 12)	/* Dynamic Memory Controller Clock Frequency Select */
 #define ACCR_XN_MASK		(0x7 << 8)	/* Core PLL Turbo-Mode-to-Run-Mode Ratio */
-#define ACCR_XL_MASK		(0x1f)		/* Core PLL Run-Mode-to-O3cillator Ratio */
+#define ACCR_XL_MASK		(0x1f)		/* Core PLL Run-Mode-to-Oscillator Ratio */
 
 #define ACCR_SMCFS(x)		(((x) & 0x7) << 23)
 #define ACCR_SFLFS(x)		(((x) & 0x3) << 18)
