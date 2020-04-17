@@ -748,7 +748,7 @@ struct usb_encryption_descriptor {
 #define	USB_ENC_TYPE_RSA_1		3	/* rsa3072/sha1 auth */
 	__u8  bEncryptionValue;		/* use in SET_ENCRYPTION */
 	__u8  bAuthKeyIndex;
-} __attribute__((packed));
+} __attribute__((packed, aligned(2)));
 
 
 /*-------------------------------------------------------------------------*/
