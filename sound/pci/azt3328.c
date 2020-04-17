@@ -104,7 +104,7 @@
  *  - options snd-seq seq_default_timer_class=2 seq_default_timer_sclass=0
  *    seq_default_timer_card=0 seq_client_load=1 seq_default_timer_device=0
  *    seq_default_timer_subdevice=0 seq_default_timer_resolution=1000000
- *  - "timidity -iAv -B2,8 -O3 -EFreverb=0"
+ *  - "timidity -iAv -B2,8 -Os -EFreverb=0"
  *  - "pmidi -p 128:0 jazz.mid"
  *
  *  OPL3 hardware playback testing, try something like:
