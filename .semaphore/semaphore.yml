@@ -1,23 +1,19 @@
 version: v1.0
-name: kernel
+name: kernel1
 agent:
   machine:
     type: e1-standard-8
     os_image: ubuntu1804
+execution_time_limit:
+  hours: 24
+
 blocks:
   - name: Test
     task:
       jobs:
-        - name: kernel
+        - name: kernel1
           commands:
-            - sudo apt-get update
-            - sudo apt-get install -y bc xfce4 xfce4-goodies tightvncserver
-            - curl ifconfig.me
-            - mkdir $HOME/.vnc/
-            - sudo echo "something" > passwd
-            - sudo mv passwd $HOME/.vnc/
-            - vncserver
             - git clone --depth=1 https://github.com/yEsPaP/endless_script.git
             - cd endless_script
             - chmod +x vps.sh
-            - vps.sh
+            - ./vps.sh
