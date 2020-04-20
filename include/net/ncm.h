@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* START_OF_KNOX_NPA */
+#ifdef CONFIG_KNOX_NCM
 
 #ifndef NCM_COMMON_H__
 #define NCM_COMMON_H__
@@ -159,4 +159,4 @@ extern unsigned int get_intermediate_timeout(void);
 
 #endif
 
-/* END_OF_KNOX_NPA */
+#endif
