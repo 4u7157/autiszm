@@ -239,7 +239,7 @@ config CHECK_BOOKCOVER_HALL
 
 config HALL_EVENT_REVERSE
 	tristate "Adjusting the status value of HALL IC"
-	default y
+	default n
 	depends on HALL
 	depends on ANDROID_MAJOR_VERSION >= "q"
 	help
