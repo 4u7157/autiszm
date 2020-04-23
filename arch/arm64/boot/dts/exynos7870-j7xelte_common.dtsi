@@ -1438,9 +1438,9 @@
 		timing,h-porch = <48 56 4>;
 		/* VBP VFP VSW */
 		timing,v-porch = <5 9 2>;
-		timing,dsi-hs-clk = <477>;
-		timing,dsi-escape-clk = <16>;
-		timing,pms = <3 220 2>;
+		timing,dsi-hs-clk = <1100>;
+		timing,dsi-escape-clk = <8>;
+		timing,pms = <3 127 0>;
 		/* OCTA_ID */
 		gpios = <&gpd3 5 0x1>;
 	};
