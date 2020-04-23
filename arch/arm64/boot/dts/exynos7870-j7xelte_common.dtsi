@@ -1386,10 +1386,11 @@
 	};
 
 	decon_fb@14830000 {
-		psr_mode = <0>;		/* 0: video mode, 1: DP command mode, 2: MIPI command mode */
-		disp-pll-clk = <64000000>;
-		disp-vclk = <64000000>;
-		disp-eclk = <70000000>;
+		gpios = <&gpa0 6 0xf>; /* te_signal XEINT_6 */
+		psr_mode = <2>; /* 0: video mode, 1: DP command mode, 2: MIPI command mode */
+		disp-pll-clk = <142000000>;
+		disp-eclk = <160000000>;
+		disp-vclk = <142000000>;
 		disp-dvfs = <200000>;
 		status = "okay";
 	};
@@ -1405,44 +1406,39 @@
 
 		dsim_set_panel_power_enable {
 			type =
-			"regulator,enable",	"LCD_1P8",
 			"regulator,enable",	"LCD_3P0",
-			"delay,msleep",	"25";
+			"regulator,enable",	"LCD_1P8";
 		};
 		dsim_set_panel_power_disable {
 			type =
+			"regulator,disable",	"LCD_1P8",
 			"delay,usleep",	"5000 6000",
-			"gpio,low",	"gpio_lcd_rst",
-			"delay,usleep",	"10000 11000",
-			"regulator,disable",	"LCD_3P0",
-			"regulator,disable",	"LCD_1P8";
+			"regulator,disable",	"LCD_3P0";
 		};
 		dsim_reset_panel {
 			type =
 			"gpio,high",	"gpio_lcd_rst",
-			"delay,usleep",	"5000 6000",
+			"delay,usleep",	"10000 11000",
 			"gpio,low",	"gpio_lcd_rst",
-			"delay,usleep",	"5000 6000",
+			"delay,usleep",	"10000 11000",
 			"gpio,high",	"gpio_lcd_rst",
 			"delay,usleep",	"10000 11000";
 		};
 	};
 
 	ea8061s: ea8061s_hd {
-		mode = <0>;
-		resolution = <720 1280>;
-		size = <68 121>;
+		mode = <2>; /* 0: video mode, 1: DP command mode, 2: MIPI command mode */
+		resolution = <1080 1920>;
+		size = <70 121>;
 		ddi_type = <1>;
 		timing,refresh = <60>;
 		/* HBP HFP HSW */
-		timing,h-porch = <48 56 4>;
+		timing,h-porch = <1 1 1>;
 		/* VBP VFP VSW */
-		timing,v-porch = <5 9 2>;
+		timing,v-porch = <10 3 1>;
 		timing,dsi-hs-clk = <1100>;
 		timing,dsi-escape-clk = <8>;
 		timing,pms = <3 127 0>;
-		/* OCTA_ID */
-		gpios = <&gpd3 5 0x1>;
 	};
 
 	sec_thermistor@0 {
