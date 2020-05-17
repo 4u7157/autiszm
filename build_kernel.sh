@@ -8,4 +8,4 @@ PATH="../clang/bin:../toolchain/bin:${PATH}" \
 make -j$(nproc --all) \
                       ARCH=arm64 \
                       CC=clang \
-                      CROSS_COMPILE=aarch64-gnu-
+                      CROSS_COMPILE=aarch64-linux-gnu-
